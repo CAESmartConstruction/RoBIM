@@ -8,5 +8,6 @@ namespace RoBIM
 {
     internal class Class1
     {
+        test;
     }
 }
