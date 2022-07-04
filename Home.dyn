@@ -1,0 +1,362 @@
+{
+  "Uuid": "121010d7-d047-400d-a8c8-518e47aa19f5",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Home",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSPointOnElementSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "d0b556e0-34d1-49e5-9088-ab855cf0cbdb-000b0a6d:0:INSTANCE:d0b556e0-34d1-49e5-9088-ab855cf0cbdb-000b0a6e:75:SURFACE"
+      ],
+      "Id": "f52f665e0a384d9f9acd09bf87ff0f02",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d86e38eadd8e4ba4ae3bc791ddab6dae",
+          "Name": "點",
+          "Description": "選取的元素。",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "4755b6f41b974b22bfeb230cb402ac50",
+      "Inputs": [
+        {
+          "Id": "ea21d7fe22594157861c37bae0c15afe",
+          "Name": "",
+          "Description": "要演算的節點。",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2066bda368da498ba435ad97f1961435",
+          "Name": "",
+          "Description": "觀看內容。",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSEdgeSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "83099f19-1d47-4e1e-9770-025389cf72bb-000b68fc:0:INSTANCE:d0b556e0-34d1-49e5-9088-ab855cf0cbdb-000b0a5f:31:LINEAR"
+      ],
+      "Id": "17891039b4544661b27f5cff3fe0a821",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "904e1a00138c42c0a4f0779ba1d29916",
+          "Name": "曲線",
+          "Description": "選取的元素。",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Curve.EndPoint",
+      "Id": "1b70606d4a7d4859baaf3e5e395cdc2f",
+      "Inputs": [
+        {
+          "Id": "e426abece9ee42aebe2421f28d35a0e4",
+          "Name": "curve",
+          "Description": "Autodesk.DesignScript.Geometry.Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0e4066a1517c4b1d9c7904b8b4c57df7",
+          "Name": "Point",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the end Point along the Curve\n\nCurve.EndPoint: Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Curve.StartPoint",
+      "Id": "48770acd260f4edc961d46a0dbb86867",
+      "Inputs": [
+        {
+          "Id": "dee1444a19c94c43b73adcaa00f7e7d4",
+          "Name": "curve",
+          "Description": "Autodesk.DesignScript.Geometry.Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "29afd43c89504fd786b12c615155ad90",
+          "Name": "Point",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the start Point along the Curve\n\nCurve.StartPoint: Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Point.X",
+      "Id": "d21f0e7295aa4c9ab95d5d279bf7e8ba",
+      "Inputs": [
+        {
+          "Id": "409583c7d3a042df820121e7be5095de",
+          "Name": "point",
+          "Description": "Autodesk.DesignScript.Geometry.Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ec7de691091f4838868daaaeebaf6431",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the X component of a Point\n\nPoint.X: double"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSPointOnElementSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "d0b556e0-34d1-49e5-9088-ab855cf0cbdb-000b0a6d:0:INSTANCE:d0b556e0-34d1-49e5-9088-ab855cf0cbdb-000b0a6e:70:SURFACE"
+      ],
+      "Id": "476130f4af4746c5a89f054a668a9218",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3ca01d711f4540e98dc321baa7d5c094",
+          "Name": "Point",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "ad5b747afedb4612858a30e92ce8c570",
+      "Inputs": [
+        {
+          "Id": "4aefb4b08c0d4c77885b7a2154decfd5",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a4d10ded9fcb485d926d945e01cf12e0",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "d86e38eadd8e4ba4ae3bc791ddab6dae",
+      "End": "409583c7d3a042df820121e7be5095de",
+      "Id": "831ee5c281ff485fa2586c6498ae0615"
+    },
+    {
+      "Start": "d86e38eadd8e4ba4ae3bc791ddab6dae",
+      "End": "ea21d7fe22594157861c37bae0c15afe",
+      "Id": "a283f5f99f53490fba4ca05e2a02744b"
+    },
+    {
+      "Start": "904e1a00138c42c0a4f0779ba1d29916",
+      "End": "e426abece9ee42aebe2421f28d35a0e4",
+      "Id": "b1511b23ae214fc885a87beacb5bd682"
+    },
+    {
+      "Start": "904e1a00138c42c0a4f0779ba1d29916",
+      "End": "dee1444a19c94c43b73adcaa00f7e7d4",
+      "Id": "7a088a8417f346ec8f5c9da9beac360e"
+    },
+    {
+      "Start": "3ca01d711f4540e98dc321baa7d5c094",
+      "End": "4aefb4b08c0d4c77885b7a2154decfd5",
+      "Id": "f302c5b38fec4b75bd579582ae3b03d0"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "f52f665e0a384d9f9acd09bf87ff0f02",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Select Point on Face",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 395.47749863085824,
+        "Y": 256.9520443974875
+      },
+      {
+        "Id": "4755b6f41b974b22bfeb230cb402ac50",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 647.699505899718,
+        "Y": 549.67155957896671
+      },
+      {
+        "Id": "17891039b4544661b27f5cff3fe0a821",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Select Edge",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 341.87187056804311,
+        "Y": 421.07142051701794
+      },
+      {
+        "Id": "1b70606d4a7d4859baaf3e5e395cdc2f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Curve.EndPoint",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 677.16376884891008,
+        "Y": 407.87816202468741
+      },
+      {
+        "Id": "48770acd260f4edc961d46a0dbb86867",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Curve.StartPoint",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 348.57287324069432,
+        "Y": 603.69312026153921
+      },
+      {
+        "Id": "d21f0e7295aa4c9ab95d5d279bf7e8ba",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Point.X",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1041.6602893845939,
+        "Y": 194.21994661325721
+      },
+      {
+        "Id": "476130f4af4746c5a89f054a668a9218",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Select Point on Face",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 387.0890068001857,
+        "Y": 418.42670922331865
+      },
+      {
+        "Id": "ad5b747afedb4612858a30e92ce8c570",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 639.31101406904577,
+        "Y": 711.14622440479866
+      }
+    ],
+    "Annotations": [],
+    "X": -66.241111453168685,
+    "Y": -274.91188985406285,
+    "Zoom": 0.82308056264365315
+  }
+}
