@@ -41,6 +41,7 @@ namespace RoBIM
                 {
 
                     OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(targetElement);
+                    MessageBox.Show("test");
                     elementsJson.ElementList.Add(oneElement);
 
 
