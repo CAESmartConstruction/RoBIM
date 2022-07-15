@@ -17,7 +17,7 @@ namespace RoBIM
 {
 
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class BeamToJson : IExternalCommand
+    public class PanelToJson : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -25,8 +25,6 @@ namespace RoBIM
             UIDocument uidoc;
             uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-
-
 
             reference_collector = uidoc.Selection.PickObjects(ObjectType.Element);
 
@@ -36,14 +34,16 @@ namespace RoBIM
             foreach (Reference reference in reference_collector)
             {
                 Element targetElement = doc.GetElement(reference);
+                if (targetElement.Name.Equals("#6_Screw"))
+                    MessageBox.Show("test");
+                    continue;
+                if (targetElement == null) continue;
                 int categoryId = targetElement.Category.Id.IntegerValue;
                 if (categoryId == (int)BuiltInCategory.OST_StructuralFraming)
                 {
-
+                    //MessageBox.Show(targetElement.Id.ToString()+ "   "+targetElement.Name.ToString());
                     OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(targetElement);
                     elementsJson.ElementList.Add(oneElement);
-
-
 
                 }
                 else if (categoryId == (int)BuiltInCategory.OST_GenericModel)
@@ -52,8 +52,8 @@ namespace RoBIM
                     elementsJson.ElementList.Add(oneElement);
                 }
             }
-
-            String directory = String.Format(@"C:\Users\Ian\source\repos\panel_{0}.txt", DateTime.Now.ToLongDateString());
+            String TimeStamp = DateTime.Now.ToLongDateString() + DateTime.Now.ToLongTimeString().Replace(":","_");
+            String directory = String.Format(@"C:\Users\Ian\source\repos\panel_{0}.txt", TimeStamp);
             MessageBox.Show(directory);
             string json = JsonConvert.SerializeObject(elementsJson, Formatting.Indented);
             File.WriteAllText(@directory, json);

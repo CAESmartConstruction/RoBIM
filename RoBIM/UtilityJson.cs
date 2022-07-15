@@ -23,7 +23,7 @@ namespace RoBIM
             geomOptions.ComputeReferences = true;
             List<Solid> solids = UtilityJson.GetElementSolids(targetElement, geomOptions, false);
             LocationPoint locationPoint = targetElement.Location as LocationPoint;
-
+            
             ElementId pickedtypeid = targetElement.GetTypeId();
             Element family = doc.GetElement(pickedtypeid);
             int Hnumber = family.LookupParameter("Hnumber").AsInteger();
@@ -51,6 +51,7 @@ namespace RoBIM
 
             return oneElement;
         }
+       
         static public OneElement getJsonFromStructuralFraming(Element targetElement)
         {   
 
@@ -58,17 +59,22 @@ namespace RoBIM
             List<XYZ> location = new List<XYZ>();
             Options geomOptions = new Options();
             geomOptions.ComputeReferences = true;
+            FamilyInstance familyInstance = targetElement as FamilyInstance;
+            Instance instance = targetElement as Instance;
             List<Solid> solids = UtilityJson.GetElementSolids(targetElement, geomOptions, false);
-            Instance instance =targetElement as Instance;
-            
+          
             Transform  transform = instance.GetTransform().Inverse;
             
             LocationCurve locationcurve = targetElement.Location as LocationCurve;
+            
             XYZ direction = (locationcurve.Curve.GetEndPoint(1) - locationcurve.Curve.GetEndPoint(0)).Normalize();
-            double Length = (targetElement.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsDouble());
+            double Length = (targetElement.get_Parameter(BuiltInParameter.STRUCTURAL_FRAME_CUT_LENGTH).AsDouble());
+            double startExtension= (targetElement.get_Parameter(BuiltInParameter.START_EXTENSION).AsDouble());
             string elementName = targetElement.Name.ToString();
+            
             //MessageBox.Show("Name :" + elementName);
-            XYZ startPoint = locationcurve.Curve.GetEndPoint(0);
+            XYZ startPoint = locationcurve.Curve.GetEndPoint(0).Subtract(direction.Multiply(startExtension));
+            //MessageBox.Show("startExtension :" + startExtension.ToString());
             XYZ endPoint = startPoint.Add(direction.Multiply(Length));
             //MessageBox.Show("length :" + (Length.ToString()));
 
@@ -97,7 +103,7 @@ namespace RoBIM
                                 curveDirection = (curveLoopenum.Current.GetEndPoint(1) - curveLoopenum.Current.GetEndPoint(0)).Normalize();
                                 XYZ glabalpoint = curveLoopenum.Current.GetEndPoint(0);
                                 XYZ localpoint = transform.OfPoint(glabalpoint);
-                                section.Add(localpoint);
+                                section.Add(glabalpoint);
                                 
                                 while (curveLoopenum.MoveNext())
                                 {
@@ -109,7 +115,7 @@ namespace RoBIM
                                     {   
 
                                         localpoint = transform.OfPoint(glabalpoint);
-                                        section.Add(localpoint);
+                                        section.Add(glabalpoint);
 
                                         curveDirection = currentCurveDirection;
                                     }
@@ -151,7 +157,7 @@ namespace RoBIM
                 return null;
             }
             if (null == opt)
-                opt = new Options();
+              opt = new Options();
             List<Solid> solids = new List<Solid>();
             GeometryElement gElem;
             try
@@ -160,6 +166,7 @@ namespace RoBIM
                 {
                     // we transform the geometry to instance coordinate to reflect actual geometry 
                     FamilyInstance fInst = elem as FamilyInstance;
+                    MessageBox.Show("test");
                     gElem = fInst.GetOriginalGeometry(opt);
                     Transform trf = fInst.GetTransform();
                     if (!trf.IsIdentity)
@@ -217,6 +224,45 @@ namespace RoBIM
                 while (gIter2.MoveNext())
                 {
                     solids.AddRange(getSolids(gIter2.Current));
+                }
+            }
+            return solids;
+        }
+        public static IList<Solid> GetTargetSolids(Element element)
+        {
+            List<Solid> solids = new List<Solid>();
+
+
+            Options options = new Options();
+            options.DetailLevel = ViewDetailLevel.Fine;
+            GeometryElement geomElem = element.get_Geometry(options);
+            foreach (GeometryObject geomObj in geomElem)
+            {
+                if (geomObj is Solid)
+                {
+                    Solid solid = (Solid)geomObj;
+                    if (solid.Faces.Size > 0 && solid.Volume > 0.0)
+                    {
+                        solids.Add(solid);
+                    }
+                    // Single-level recursive check of instances. If viable solids are more than
+                    // one level deep, this example ignores them.
+                }
+                else if (geomObj is GeometryInstance)
+                {
+                    GeometryInstance geomInst = (GeometryInstance)geomObj;
+                    GeometryElement instGeomElem = geomInst.GetInstanceGeometry();
+                    foreach (GeometryObject instGeomObj in instGeomElem)
+                    {
+                        if (instGeomObj is Solid)
+                        {
+                            Solid solid = (Solid)instGeomObj;
+                            if (solid.Faces.Size > 0 && solid.Volume > 0.0)
+                            {
+                                solids.Add(solid);
+                            }
+                        }
+                    }
                 }
             }
             return solids;
