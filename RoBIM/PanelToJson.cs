@@ -21,7 +21,7 @@ namespace RoBIM
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            string test;
+            string test = "";
             ICollection<Reference> reference_collector;
             UIDocument uidoc;
             uidoc = commandData.Application.ActiveUIDocument;
