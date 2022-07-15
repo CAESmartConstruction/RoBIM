@@ -21,7 +21,7 @@ namespace RoBIM
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            string test;
+           
             ICollection<Reference> reference_collector;
             UIDocument uidoc;
             uidoc = commandData.Application.ActiveUIDocument;
@@ -36,7 +36,7 @@ namespace RoBIM
             {
                 Element targetElement = doc.GetElement(reference);
                 if (targetElement.Name.Equals("#6_Screw"))
-                    MessageBox.Show("test");
+                   
                     continue;
                 if (targetElement == null) continue;
                 int categoryId = targetElement.Category.Id.IntegerValue;
