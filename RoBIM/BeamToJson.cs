@@ -36,15 +36,20 @@ namespace RoBIM
             foreach (Reference reference in reference_collector)
             {
                 Element targetElement = doc.GetElement(reference);
-                int categoryId = targetElement.Category.Id.IntegerValue;
+                Category category = targetElement.Category;
+                int categoryId = targetElement.Category.Id.IntegerValue;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                 if (categoryId == (int)BuiltInCategory.OST_StructuralFraming)
                 {
-
-                    OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(targetElement);
-                    MessageBox.Show("test");
-                    elementsJson.ElementList.Add(oneElement);
-
-
+                    if(targetElement.Name == "#6_Screw")
+                    {
+                        OneElement oneElement = UtilityJson.getJsonFromScrew(targetElement);
+                        elementsJson.ElementList.Add(oneElement);
+                    }
+                    else
+                    {
+                        OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(targetElement);
+                        elementsJson.ElementList.Add(oneElement);
+                    }
 
                 }
                 else if (categoryId == (int)BuiltInCategory.OST_GenericModel)
@@ -54,7 +59,7 @@ namespace RoBIM
                 }
             }
 
-            String directory = String.Format(@"C:\Users\Ian\source\repos\panel_{0}.txt", DateTime.Now.ToLongDateString());
+            String directory = String.Format(@"C:\Users\nick0\RoBIM-1\BeamToJason\panel_{0}.txt", DateTime.Now.ToLongDateString());
             MessageBox.Show(directory);
             string json = JsonConvert.SerializeObject(elementsJson, Formatting.Indented);
             File.WriteAllText(@directory, json);
@@ -72,6 +77,14 @@ namespace RoBIM
             set;
         }
         public XYZ EndPoint
+        {
+            get;
+            set;
+        }
+    }
+    public class ScrewLocation
+    {
+        public XYZ ScrewPoint
         {
             get;
             set;
@@ -112,6 +125,26 @@ namespace RoBIM
         
 
     }
+
+    public class ScrewComponent: OneElement
+    {
+        public String ElementType
+        {
+            get;
+            set;
+        }
+        public String ElementName
+        {
+            get;
+            set;
+        }
+        public ScrewLocation screwLocation
+        {
+            get;
+            set;
+        }
+    }
+
     public class InsulationLocation
     {
         public XYZ StartPoint

@@ -1,0 +1,15 @@
+{
+  "ElementList": [
+    {
+      "ElementType": "Screw",
+      "ElementName": "#6_Screw",
+      "screwLocation": {
+        "ScrewPoint": {
+          "Z": 14.930664062499424,
+          "Y": 0.29785156249905753,
+          "X": 0.062499999999984
+        }
+      }
+    }
+  ]
+}
