@@ -58,7 +58,7 @@ namespace RoBIM
                 }
             }
 
-            String directory = String.Format(@"C:\Users\nick0\RoBIM-1\BeamToJason\panel_{0}.txt", DateTime.Now.ToLongDateString());
+            String directory = String.Format(@"C:\Users\nick0\RoBIM-1\Result_File\panel_{0}.txt", DateTime.Now.ToLongDateString());
             MessageBox.Show(directory);
             string json = JsonConvert.SerializeObject(elementsJson, Formatting.Indented);
             File.WriteAllText(@directory, json);
