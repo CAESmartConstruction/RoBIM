@@ -26,7 +26,8 @@ namespace RoBIM
             UIDocument uidoc;
             uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-
+            Transaction trans = new Transaction(doc);
+            trans.Start("test");
             reference_collector = uidoc.Selection.PickObjects(ObjectType.Element);
 
             Elements elementsJson = new Elements();
@@ -36,14 +37,13 @@ namespace RoBIM
             {
                 Element targetElement = doc.GetElement(reference);
                 if (targetElement.Name.Equals("#6_Screw"))
-                   
                     continue;
                 if (targetElement == null) continue;
                 int categoryId = targetElement.Category.Id.IntegerValue;
                 if (categoryId == (int)BuiltInCategory.OST_StructuralFraming)
                 {
                     //MessageBox.Show(targetElement.Id.ToString()+ "   "+targetElement.Name.ToString());
-                    OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(targetElement);
+                    OneElement oneElement = UtilityJson.getJsonFromStructuralFraming(doc, targetElement);
                     elementsJson.ElementList.Add(oneElement);
 
                 }
@@ -53,6 +53,7 @@ namespace RoBIM
                     elementsJson.ElementList.Add(oneElement);
                 }
             }
+            trans.Commit();
             String TimeStamp = DateTime.Now.ToLongDateString() + DateTime.Now.ToLongTimeString().Replace(":","_");
             String directory = String.Format(@"C:\Users\Ian\source\repos\panel_{0}.txt", TimeStamp);
             MessageBox.Show(directory);
@@ -63,7 +64,30 @@ namespace RoBIM
         }
 
     }
-
+    public class InstanceTransform
+    {
+        public XYZ BasisX
+        {
+            get;
+            set;
+        }
+        public XYZ BasisY
+        {
+            get;
+            set;
+        }
+        public XYZ BasisZ
+        {
+            get;
+            set;
+        }
+        public XYZ Origin
+        {
+            get;
+            set;
+        }
+    }
+    
     public class StructuralLocation
     {
         public XYZ StartPoint
@@ -109,7 +133,12 @@ namespace RoBIM
             get;
             set;
         }
-        
+        public  InstanceTransform instanceTransform
+        {
+            get;
+            set;
+        }
+
 
     }
     public class InsulationLocation

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
 using System.Windows.Forms;
-
+using Autodesk.Revit.DB.Structure;
 
 
 namespace RoBIM
@@ -24,7 +24,7 @@ namespace RoBIM
             geomOptions.ComputeReferences = true;
             List<Solid> solids = UtilityJson.GetElementSolids(targetElement, geomOptions, false);
             LocationPoint locationPoint = targetElement.Location as LocationPoint;
-            
+           
             ElementId pickedtypeid = targetElement.GetTypeId();
             Element family = doc.GetElement(pickedtypeid);
             int Hnumber = family.LookupParameter("Hnumber").AsInteger();
@@ -53,27 +53,67 @@ namespace RoBIM
             return oneElement;
         }
        
-        static public OneElement getJsonFromStructuralFraming(Element targetElement)
+        static public OneElement getJsonFromStructuralFraming(Document doc,Element targetElement)
         {   
 
             List<XYZ> section = new List<XYZ>();
             List<XYZ> location = new List<XYZ>();
             Options geomOptions = new Options();
-            geomOptions.ComputeReferences = true;
+            StringBuilder st = new StringBuilder();
+            FamilySymbol elementSymbol = null;
+            FilteredElementCollector collector = new FilteredElementCollector(doc);
+            collector.OfCategory(BuiltInCategory.OST_StructuralFraming);
+            collector.OfClass(typeof(FamilySymbol));
+            foreach (FamilySymbol symbol in collector)
+            {
+                if (symbol.Name == targetElement.Name)
+                //Name 是type name ,FamilyName是FamilyType Name
+
+                {
+                    if (!symbol.IsActive)
+                    {
+                        symbol.Activate();
+                    }
+                    elementSymbol = symbol;
+                }
+            }
+            Element element = doc.FamilyCreate.NewFamilyInstance(XYZ.Zero, elementSymbol,StructuralType.Beam);
+            Line line = Line.CreateBound(XYZ.Zero, XYZ.Zero.Add(XYZ.BasisZ.Multiply(10)));
+            LocationCurve elemCurve = element.Location as LocationCurve;
+            elemCurve.Curve = line;
+            geomOptions.View = doc.ActiveView;
+            geomOptions.ComputeReferences = false;
             FamilyInstance familyInstance = targetElement as FamilyInstance;
+            
+            
             Instance instance = targetElement as Instance;
             List<Solid> solids = UtilityJson.GetElementSolids(targetElement, geomOptions, false);
-          
-            Transform  transform = instance.GetTransform().Inverse;
+           
             
+            Transform transform = familyInstance.GetTransform();
+            st.AppendLine("transform.get_Basis(X): (" + transform.BasisX.ToString().ToString() + ")");
+            st.AppendLine("transform.get_Basis(Y): (" + transform.BasisY.ToString().ToString() + ")");
+            st.AppendLine("transform.get_Basis(Z): (" + transform.BasisZ.ToString().ToString() + ")");
+          
+            st.AppendLine("transform.get_Basis(0): (" + transform.get_Basis(0).ToString().ToString() + ")");
+            st.AppendLine("transform.get_Basis(1): (" + transform.get_Basis(1).ToString().ToString() + ")");
+            st.AppendLine("transform.get_Basis(2): (" + transform.get_Basis(2).ToString().ToString() + ")");
+            st.AppendLine("transform.Origin: (" + transform.Origin.ToString().ToString() + ")");
+
+            Transform transform_Inverse = transform.Inverse;
+
             LocationCurve locationcurve = targetElement.Location as LocationCurve;
             
             XYZ direction = (locationcurve.Curve.GetEndPoint(1) - locationcurve.Curve.GetEndPoint(0)).Normalize();
             double Length = (targetElement.get_Parameter(BuiltInParameter.STRUCTURAL_FRAME_CUT_LENGTH).AsDouble());
             double startExtension= (targetElement.get_Parameter(BuiltInParameter.START_EXTENSION).AsDouble());
+            double endExtension = (targetElement.get_Parameter(BuiltInParameter.END_EXTENSION).AsDouble());
             string elementName = targetElement.Name.ToString();
-            
+            XYZ originPoint = (locationcurve.Curve.GetEndPoint(0) + locationcurve.Curve.GetEndPoint(1))/2;
             //MessageBox.Show("Name :" + elementName);
+            //st.AppendLine("originPoint: (" + originPoint.ToString().ToString() + ")");
+            //st.AppendLine("originPoint after transform: (" + transform.OfPoint(originPoint).ToString() + ")");
+            MessageBox.Show(st.ToString());
             XYZ startPoint = locationcurve.Curve.GetEndPoint(0).Subtract(direction.Multiply(startExtension));
             //MessageBox.Show("startExtension :" + startExtension.ToString());
             XYZ endPoint = startPoint.Add(direction.Multiply(Length));
@@ -103,8 +143,9 @@ namespace RoBIM
                                 curveLoopenum.MoveNext();
                                 curveDirection = (curveLoopenum.Current.GetEndPoint(1) - curveLoopenum.Current.GetEndPoint(0)).Normalize();
                                 XYZ glabalpoint = curveLoopenum.Current.GetEndPoint(0);
-                                XYZ localpoint = transform.OfPoint(glabalpoint);
-                                section.Add(glabalpoint);
+                                //XYZ localpoint = useConstantTransformAndOrigin(glabalpoint, constTransform,transform.Origin);
+                                XYZ localpoint = transform_Inverse.OfPoint(glabalpoint);
+                                section.Add(localpoint);
                                 
                                 while (curveLoopenum.MoveNext())
                                 {
@@ -115,8 +156,9 @@ namespace RoBIM
                                     if (changeDirection)
                                     {   
 
-                                        localpoint = transform.OfPoint(glabalpoint);
-                                        section.Add(glabalpoint);
+                                        //localpoint = useConstantTransformAndOrigin(glabalpoint, constTransform, transform.Origin);
+                                        localpoint = transform_Inverse.OfPoint(glabalpoint);
+                                        section.Add(localpoint);
 
                                         curveDirection = currentCurveDirection;
                                     }
@@ -127,8 +169,8 @@ namespace RoBIM
                     }
                 }
             }
-
-
+            
+            //doc.Delete(element.Id);
             
 
             SteelComponet oneElement = new SteelComponet();
@@ -139,9 +181,55 @@ namespace RoBIM
             oneElement.structuralLocation.StartPoint = startPoint;
             oneElement.structuralLocation.EndPoint = endPoint;
             oneElement.CrossSectionRotation = crossSectionRotation;
-           
+            oneElement.instanceTransform = new InstanceTransform();
+            oneElement.instanceTransform.BasisX = transform.BasisX;
+            oneElement.instanceTransform.BasisY = transform.BasisY;
+            oneElement.instanceTransform.BasisZ = transform.BasisZ;
+            oneElement.instanceTransform.Origin = transform.Origin;
+
+
             return oneElement;
 
+        }
+        static public  XYZ useConstantTransformAndOrigin(XYZ point, Transform transform ,XYZ origin)
+        {
+            double x = point.X;
+            double y = point.Y;
+            double z = point.Z;
+
+            //transform basis of the old coordinate system in the new coordinate // system
+            XYZ b0 = transform.get_Basis(0);
+            XYZ b1 = transform.get_Basis(1);
+            XYZ b2 = transform.get_Basis(2);
+           
+
+            //transform the origin of the old coordinate system in the new 
+            //coordinate system
+            double xTemp = x * b0.X + y * b1.X + z * b2.X + origin.X;
+            double yTemp = x * b0.Y + y * b1.Y + z * b2.Y + origin.Y;
+            double zTemp = x * b0.Z + y * b1.Z + z * b2.Z + origin.Z;
+
+            return new XYZ(xTemp, yTemp, zTemp);
+        }
+        static public Transform useXYZaxisAndOrigin(XYZ point, Transform transform, XYZ origin)
+        {
+            double x = point.X;
+            double y = point.Y;
+            double z = point.Z;
+
+            //transform basis of the old coordinate system in the new coordinate // system
+            XYZ b0 = XYZ.BasisX;
+            XYZ b1 = XYZ.BasisX;
+            XYZ b2 = XYZ.BasisX;
+
+
+            //transform the origin of the old coordinate system in the new 
+            //coordinate system
+            double xTemp = x * b0.X + y * b1.X + z * b2.X + origin.X;
+            double yTemp = x * b0.Y + y * b1.Y + z * b2.Y + origin.Y;
+            double zTemp = x * b0.Z + y * b1.Z + z * b2.Z + origin.Z;
+
+            return transform;
         }
         /// <summary>
         /// Gets solid objects of given element.
@@ -167,7 +255,7 @@ namespace RoBIM
                 {
                     // we transform the geometry to instance coordinate to reflect actual geometry 
                     FamilyInstance fInst = elem as FamilyInstance;
-                    MessageBox.Show("test");
+                    
                     gElem = fInst.GetOriginalGeometry(opt);
                     Transform trf = fInst.GetTransform();
                     if (!trf.IsIdentity)
