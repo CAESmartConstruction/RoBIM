@@ -111,7 +111,7 @@ namespace RoBIM
             string elementName = targetElement.Name.ToString();
             XYZ originPoint = (locationcurve.Curve.GetEndPoint(0) + locationcurve.Curve.GetEndPoint(1))/2;
             //MessageBox.Show("Name :" + elementName);
-          //4564654564
+       
             XYZ startPoint = locationcurve.Curve.GetEndPoint(0).Subtract(direction.Multiply(startExtension));
             //MessageBox.Show("startExtension :" + startExtension.ToString());
             XYZ endPoint = startPoint.Add(direction.Multiply(Length));
