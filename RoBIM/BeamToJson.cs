@@ -36,7 +36,6 @@ namespace RoBIM
             foreach (Reference reference in reference_collector)
             {
                 Element targetElement = doc.GetElement(reference);
-                Category category = targetElement.Category;
                 int categoryId = targetElement.Category.Id.IntegerValue;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                 if (categoryId == (int)BuiltInCategory.OST_StructuralFraming)
                 {
