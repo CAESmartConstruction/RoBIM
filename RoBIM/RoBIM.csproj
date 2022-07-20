@@ -69,7 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BeamToJson.cs" />
+    <Compile Include="PanelToJson.cs" />
     <Compile Include="Class2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UtilityJson.cs" />

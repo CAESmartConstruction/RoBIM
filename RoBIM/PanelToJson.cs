@@ -17,17 +17,17 @@ namespace RoBIM
 {
 
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class BeamToJson : IExternalCommand
+    public class PanelToJson : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            
             ICollection<Reference> reference_collector;
             UIDocument uidoc;
             uidoc = commandData.Application.ActiveUIDocument;
             Document doc = uidoc.Document;
-
-
-
+            Transaction trans = new Transaction(doc);
+            trans.Start("test");
             reference_collector = uidoc.Selection.PickObjects(ObjectType.Element);
 
             Elements elementsJson = new Elements();
@@ -58,7 +58,10 @@ namespace RoBIM
                 }
             }
 
-            String directory = String.Format(@"C:\Users\nick0\RoBIM-1\Result_File\panel_{0}.txt", DateTime.Now.ToLongDateString());
+            //String directory = String.Format(@"C:\Users\nick0\RoBIM-1\Result_File\panel_{0}.txt", DateTime.Now.ToLongDateString());
+            trans.Commit();
+            String TimeStamp = DateTime.Now.ToLongDateString() + DateTime.Now.ToLongTimeString().Replace(":","_");
+            String directory = String.Format(@"C:\Users\Ian\source\repos\panel_{0}.txt", TimeStamp);
             MessageBox.Show(directory);
             string json = JsonConvert.SerializeObject(elementsJson, Formatting.Indented);
             File.WriteAllText(@directory, json);
@@ -67,7 +70,30 @@ namespace RoBIM
         }
 
     }
-
+    public class InstanceTransform
+    {
+        public XYZ BasisX
+        {
+            get;
+            set;
+        }
+        public XYZ BasisY
+        {
+            get;
+            set;
+        }
+        public XYZ BasisZ
+        {
+            get;
+            set;
+        }
+        public XYZ Origin
+        {
+            get;
+            set;
+        }
+    }
+    
     public class StructuralLocation
     {
         public XYZ StartPoint
@@ -121,7 +147,12 @@ namespace RoBIM
             get;
             set;
         }
-        
+        public  InstanceTransform instanceTransform
+        {
+            get;
+            set;
+        }
+
 
     }
 
