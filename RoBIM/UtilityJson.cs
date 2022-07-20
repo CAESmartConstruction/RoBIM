@@ -189,6 +189,31 @@ namespace RoBIM
             return oneElement;
 
         }
+
+        static public OneElement getJsonFromScrew(Element targetElement)
+        {
+            List<XYZ> location = new List<XYZ>();
+            Options geomOptions = new Options();
+            geomOptions.ComputeReferences = true;
+            List<Solid> solids = UtilityJson.GetElementSolids(targetElement, geomOptions, false);
+            Instance instance = targetElement as Instance;
+
+            Transform transform = instance.GetTransform().Inverse;
+
+            LocationPoint screwLocation = targetElement.Location as LocationPoint;
+            string elementName = targetElement.Name.ToString();
+            //MessageBox.Show("Name :" + elementName);
+            XYZ screwPlace = screwLocation.Point;
+            //MessageBox.Show("point :" + (screwPlace.ToString()));
+
+            ScrewComponent oneElement = new ScrewComponent();
+            oneElement.ElementType = "Screw";
+            oneElement.ElementName = elementName;
+            oneElement.screwLocation = new ScrewLocation();
+            oneElement.screwLocation.ScrewPoint = screwPlace;
+
+            return oneElement;
+        }
         static public  XYZ useConstantTransformAndOrigin(XYZ point, Transform transform ,XYZ origin)
         {
             double x = point.X;
